@@ -259,8 +259,4 @@
   <br>
 </details>
 
-<hr>
-<p align="center">
-  <b>Designed with &hearts; for <a href="https://github.com/SiddhantKoli">Siddhant Koli</a></b><br>
-  <sub>Last updated: November 2026</sub>
-</p>
+

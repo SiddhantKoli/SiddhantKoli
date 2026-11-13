@@ -179,11 +179,6 @@
         <summary><h3>Languages Overview</h3></summary>
         <p align="center">
           <a href="https://github.com/SiddhantKoli">
-            <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=SiddhantKoli&amp;langs_count=6&amp;theme=gruvbox&amp;layout=compact&amp;hide_border=true" alt="SiddhantKoli :: Top Langs">
-          </a>
-        </p>
-        <p align="center">
-          <a href="https://github.com/SiddhantKoli">
             <img width="48%" src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=SiddhantKoli&amp;theme=gruvbox" alt="SiddhantKoli :: Top Langs by repo">
             <img width="48%" src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=SiddhantKoli&amp;theme=gruvbox" alt="SiddhantKoli :: Top Langs by commit">
           </a>
@@ -193,7 +188,6 @@
         <summary><h3>Contribution Statistics</h3></summary>
         <p align="center">
           <a href="https://github.com/SiddhantKoli">
-            <img width="48%" src="https://github-readme-stats.vercel.app/api?username=SiddhantKoli&amp;show_icons=true&amp;theme=gruvbox&amp;hide_border=true" alt="SiddhantKoli Stats">
             <img width="48%" src="https://streak-stats.demolab.com/?user=SiddhantKoli&amp;theme=gruvbox&amp;hide_border=true" alt="SiddhantKoli Streak">
           </a>
         </p>

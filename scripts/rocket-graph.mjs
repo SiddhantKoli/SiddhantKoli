@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
- * rocket-graph.mjs — animated GitHub contribution graph (v3: enhanced living scene)
+ * rocket-graph.mjs — animated GitHub contribution graph (v3.1: enhanced destruction & physics)
  *
  * Enhancements:
  *  - Real data fallback: automatically fetches public GitHub contributions if no token provided.
- *  - Better destruction:
- *      * Asteroids burst into 3–4 tumbling rock fragments with rotation & drift.
+ *  - Physical destruction:
+ *      * Asteroids break into 3–4 tumbling rock fragments with active SMIL translation, rotation & drift.
  *      * Level-4 heavy asteroids take two hits with a shield hit-flash & shake on the first.
- *      * Mechanical recoil kick on the rocket each time twin cannons fire.
+ *      * Noticeable, punchy mechanical recoil nudge (-5.2px) on the rocket on every cannon blast.
  *  - Pilot personality:
  *      * Pre-firing anticipatory nose scanning toward upcoming clusters.
  *      * Barrel-roll acrobatic maneuvers through empty stretches.
@@ -122,6 +122,7 @@ async function fetchContributions(user, token) {
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const r1 = (n) => Math.round(n * 10) / 10;
 const r2 = (n) => Math.round(n * 100) / 100;
+const f1 = (n) => String(Math.round(n * 10) / 10);
 const f2 = (n) => String(Math.round(n * 100) / 100);
 const f3 = (n) => String(Math.round(n * 1e3) / 1e3);
 const f4 = (n) => String(Math.round(n * 1e4) / 1e4);
@@ -189,31 +190,19 @@ function rockSymbol(level, v, p) {
   return `<g id="rk${level}${v}${p}"><g>${bob}<g>${spin}${body}</g></g></g>`;
 }
 
-// ───────────────────────── tumbling debris fragments ─────────────────────────
-function debrisSymbol(level, k) {
-  const rand = rng(777 + level * 37 + k * 19);
-  const base = CFG.rock[level];
-  const cHighlight = mix(base, "#ffffff", 0.45);
-  const cBase = base;
-  const cDark = mix(base, "#000000", 0.4);
-
-  // 4 tumbling rock fragments moving outward in distinct quadrants
-  const shards = [
-    { dx: -13 - rand() * 4, dy: -10 - rand() * 5, r: 180 + Math.round(rand() * 120), w: 3.8, h: 3.2, col: cBase },
-    { dx:  14 + rand() * 4, dy:  -9 - rand() * 6, r: -190 - Math.round(rand() * 120), w: 4.2, h: 3.5, col: cHighlight },
-    { dx:  -9 - rand() * 5, dy:  13 + rand() * 5, r: -160 - Math.round(rand() * 100), w: 3.6, h: 4.0, col: cDark },
-    { dx:  12 + rand() * 5, dy:  11 + rand() * 4, r: 210 + Math.round(rand() * 110), w: 4.5, h: 3.2, col: cBase },
-  ];
-
+// ───────────────────────── tumbling debris shard symbols ─────────────────────────
+function fragmentSymbols() {
   let out = "";
-  for (const [idx, s] of shards.entries()) {
-    const dur = (0.48 + rand() * 0.12).toFixed(2);
-    out += `<g><animateTransform attributeName="transform" type="translate" values="0 0;${f2(s.dx)} ${f2(s.dy)}" dur="${dur}s" fill="freeze"/>` +
-      `<g><animateTransform attributeName="transform" type="rotate" values="0;${s.r}" dur="${dur}s" fill="freeze"/>` +
-      `<animate attributeName="opacity" values="1;0.9;0" keyTimes="0;0.7;1" dur="${dur}s" fill="freeze"/>` +
-      `<rect x="${f2(-s.w / 2)}" y="${f2(-s.h / 2)}" width="${f2(s.w)}" height="${f2(s.h)}" rx="0.8" fill="${s.col}"/><rect x="${f2(-s.w / 2 + 0.6)}" y="${f2(-s.h / 2 + 0.6)}" width="${f2(s.w * 0.5)}" height="${f2(s.h * 0.5)}" fill="${cHighlight}" opacity=".6"/></g></g>`;
+  for (let lv = 1; lv <= 4; lv++) {
+    const base = CFG.rock[lv];
+    const hi = mix(base, "#ffffff", 0.48);
+    const dark = mix(base, "#000000", 0.45);
+    out += `<g id="fg${lv}_0"><polygon points="-2.5,-2 2.5,-1 1,2 -2,1.5" fill="${base}"/><polygon points="-2.5,-2 0.5,-1.5 -1,0.5 -2,1" fill="${hi}" opacity=".75"/></g>`;
+    out += `<g id="fg${lv}_1"><polygon points="-3,-1 2.5,-2.5 3,1 -1.5,2.5" fill="${base}"/><polygon points="-2,-0.5 1,-1.5 2,0" fill="${hi}" opacity=".8"/><polygon points="0,0.5 2.5,0.8 1,2 -1,2" fill="${dark}" opacity=".6"/></g>`;
+    out += `<g id="fg${lv}_2"><rect x="-2" y="-2" width="4" height="3.5" rx="0.6" fill="${base}"/><rect x="-1.8" y="-1.8" width="2" height="1.6" fill="${hi}" opacity=".75"/><rect x="0.2" y="0.2" width="1.6" height="1.1" fill="${dark}" opacity=".7"/></g>`;
+    out += `<g id="fg${lv}_3"><polygon points="-1.8,-2 2,-0.5 0.5,2 -2,0.8" fill="${base}"/><polygon points="-1.5,-1.5 0.5,-0.5 -0.5,1" fill="${hi}" opacity=".8"/></g>`;
   }
-  return `<g id="deb${level}${k}">${out}</g>`;
+  return out;
 }
 
 function sparkSymbol(level, k) {
@@ -348,7 +337,6 @@ function planetPaths() {
   return pixelsToPaths(rows, cx0, cy0);
 }
 
-// Landmark 2: Derelict orbital station / comms outpost with blinking beacon
 function stationPaths() {
   const rows = [
     "....bbbb....",
@@ -451,7 +439,6 @@ function render({ cols, cells }) {
   const streakBonus = Math.min(0.2, maxStreak * 0.02);
   const vrel = pts.map((_, i) => {
     const s = cum[i];
-    // extra afterburner burst (1.75x) when reaching exit
     const exitBoost = 1 + 0.75 * smooth(clamp((s - (L - 240)) / 240, 0, 1));
     return (1 - clamp(kap[i] * 45, 0, 0.4)) * (1.35 - 0.35 * smooth(clamp(s / 260, 0, 1))) * exitBoost * (1 - 0.5 * clamp(dens[i] / 6, 0, 1)) * (1 + streakBonus);
   });
@@ -513,7 +500,6 @@ function render({ cols, cells }) {
 
   for (const r of order) {
     const isLevel4 = r.c.level === 4;
-    // Level 4 rocks take 2 hits
     const hitRounds = isLevel4 ? 2 : 1;
     const rockHits = [];
 
@@ -540,25 +526,24 @@ function render({ cols, cells }) {
     hit.set(r.c, rockHits);
   }
 
-  // ── recoil impulse calculation for the rocket
+  // ── punchy recoil impulse calculation for the rocket
   shots.sort((a, b) => a.tf - b.tf);
   const recoilTimes = [0], recoilVals = ["0 0"];
   for (const sh of shots) {
-    const t0 = Math.max(0.001, sh.tf - 0.005);
-    const tKick = sh.tf + 0.035;
-    const tRecover = sh.tf + 0.085;
-    const kx = r1(-2.4 * Math.cos(sh.a));
-    const ky = r1(-2.4 * Math.sin(sh.a));
+    const t0 = Math.max(0.001, sh.tf);
+    const tKick = sh.tf + 0.025;
+    const tRecover = sh.tf + 0.09;
+    const kx = r1(-5.2 * Math.cos(sh.a));
+    const ky = r1(-5.2 * Math.sin(sh.a));
     recoilTimes.push(t0, tKick, tRecover);
     recoilVals.push("0 0", `${kx} ${ky}`, "0 0");
   }
   recoilTimes.push(T); recoilVals.push("0 0");
 
-  // Filter overlapping keyTimes
   const cleanRecoilTimes = [0], cleanRecoilVals = ["0 0"];
   for (let i = 1; i < recoilTimes.length; i++) {
     const prev = cleanRecoilTimes[cleanRecoilTimes.length - 1];
-    if (recoilTimes[i] > prev + 0.01 && recoilTimes[i] < T) {
+    if (recoilTimes[i] > prev + 0.008 && recoilTimes[i] < T) {
       cleanRecoilTimes.push(recoilTimes[i]);
       cleanRecoilVals.push(recoilVals[i]);
     }
@@ -588,7 +573,6 @@ function render({ cols, cells }) {
   let angs = S.map(angAt);
   angs = angs.map((_, j) => { const w = angs.slice(Math.max(0, j - 1), j + 2); return w.reduce((p, q) => p + q, 0) / w.length; });
 
-  // Scan look-ahead: scan toward upcoming cluster before firing
   const scanAhead = (t) => {
     let targetShot = null, minDiff = 0.85;
     for (const sh of shots) {
@@ -671,10 +655,18 @@ function render({ cols, cells }) {
   };
   const trail = `<g filter="url(#glow)">${CFG.trail.filter((t) => t.blur).map(trailLayer).join("")}</g>` + CFG.trail.filter((t) => !t.blur).map(trailLayer).join("");
 
-  // ── asteroids: destruction, fragments, hit flash on level 4
+  // ── asteroids: destruction, active tumbling debris, hit flash on level 4
   const pop = 0.16, grow = 0.55, burst = 0.52, e = 0.03;
-  const needRock = new Set(), needSpark = new Set(), needDebris = new Set();
+  const needRock = new Set(), needSpark = new Set();
   let rocks = "", sparks = "", debris = "", hitEffects = "";
+
+  // Debris shard trajectories
+  const shardTrajectories = [
+    { id: 0, dx: -15, dy: -11, rot: -180 },
+    { id: 1, dx:  17, dy: -10, rot:  210 },
+    { id: 2, dx: -11, dy:  15, rot:  150 },
+    { id: 3, dx:  14, dy:  13, rot: -220 },
+  ];
 
   for (const c of cells) {
     const hitList = hit.get(c);
@@ -685,7 +677,7 @@ function render({ cols, cells }) {
     const hash = (Math.imul(c.col + 11, 73856093) ^ Math.imul(c.row + 5, 19349663)) >>> 0;
     const v = hash & 1, p = (hash >> 1) & 3, k = (hash >> 3) % 3;
 
-    needRock.add(`${lv},${v},${p}`); needSpark.add(`${lv},${k}`); needDebris.add(`${lv},${k}`);
+    needRock.add(`${lv},${v},${p}`); needSpark.add(`${lv},${k}`);
     const x = r1(cx(c.col)), y = r1(cy(c.row));
     let r = h + CFG.regrow, kt, op, sc;
 
@@ -713,9 +705,23 @@ function render({ cols, cells }) {
       `<animateTransform attributeName="transform" type="scale" values="0.5;0.5;2.6;2.6" keyTimes="0;${fT(h)};${fT(h + burst)};1" ${dur}/>` +
       `<animate attributeName="opacity" values="0;0;1;0;0" keyTimes="0;${fT(h)};${fT(h + e)};${fT(h + burst)};1" ${dur}/></use></g>`;
 
-    // Tumbling rock debris fragments
-    debris += `<g transform="translate(${x} ${y})"><use xlink:href="#deb${lv}${k}" opacity="0">` +
-      `<animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;${fT(h)};${fT(h + 0.01)};${fT(h + 0.44)};${fT(h + 0.5)};1" ${dur}/></use></g>`;
+    // Active tumbling rock debris fragments (3 shards for lv 1-2, 4 shards for lv 3-4)
+    const shardCount = lv >= 3 ? 4 : 3;
+    const hEnd = h + 0.46;
+    for (let sIdx = 0; sIdx < shardCount; sIdx++) {
+      const s = shardTrajectories[sIdx];
+      const jx = ((hash >> (sIdx * 3)) & 3) - 1.5;
+      const jy = ((hash >> (sIdx * 3 + 1)) & 3) - 1.5;
+      const tdx = f1(s.dx + jx);
+      const tdy = f1(s.dy + jy);
+
+      debris += `<g transform="translate(${x} ${y})">` +
+        `<use xlink:href="#fg${lv}_${s.id}" opacity="0">` +
+        `<animateTransform attributeName="transform" type="translate" values="0 0;0 0;${tdx} ${tdy};${tdx} ${tdy}" keyTimes="0;${fT(h)};${fT(hEnd)};1" ${dur}/>` +
+        `<animateTransform attributeName="transform" type="rotate" values="0;0;${s.rot};${s.rot}" keyTimes="0;${fT(h)};${fT(hEnd)};1" ${dur} additive="sum"/>` +
+        `<animate attributeName="opacity" values="0;0;1;0.85;0;0" keyTimes="0;${fT(h)};${fT(h + 0.02)};${fT(h + 0.35)};${fT(hEnd)};1" ${dur}/>` +
+        `</use></g>`;
+    }
   }
 
   // ── laser bolts
@@ -731,7 +737,7 @@ function render({ cols, cells }) {
   const symbols =
     [...needRock].map((s) => rockSymbol(...s.split(",").map(Number))).join("") +
     [...needSpark].map((s) => sparkSymbol(...s.split(",").map(Number))).join("") +
-    [...needDebris].map((s) => debrisSymbol(...s.split(",").map(Number))).join("");
+    fragmentSymbols();
 
   // ── background layers
   const lit = new Set(cells.map((c) => `${c.col},${c.row}`));

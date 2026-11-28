@@ -2,7 +2,7 @@
   <h1 align="center">Hi <img width="35" src="https://raw.githubusercontent.com/MartinHeinz/MartinHeinz/master/wave.gif" alt="waving hand">, I'm Siddhant Koli</h1>
   <h4 align="center">AI &amp; Machine Learning Engineer &bull; B.Tech AIML Student at St. John College of Engineering &amp; Management (SJCEM)</h4>
   <p align="center">
-    <i>Explore my work, projects, and see my <a href="https://github.com/SiddhantKoli/SiddhantKoli/blob/main/assets/doc/siddhant_resume.pdf" target="_blank"><b>Resume</b></a></i>
+    <i>🌐 Visit my <a href="https://siddhantkoli.tech" target="_blank"><b>Portfolio (siddhantkoli.tech)</b></a> &bull; Explore my work, projects, and see my <a href="https://github.com/SiddhantKoli/SiddhantKoli/blob/main/assets/doc/siddhant_resume.pdf" target="_blank"><b>Resume</b></a></i>
   </p>
   <p align="center">
     <a href="https://github.com/SiddhantKoli">
@@ -25,6 +25,9 @@
       <h2 align="center">You can reach me by:</h2>
       <p align="center">
         <br>
+        <a href="https://siddhantkoli.tech" target="_blank">
+          <img align="center" src="https://img.shields.io/badge/portfolio-6366F1.svg?style=for-the-badge&amp;logo=google-chrome&amp;logoColor=white" alt="Portfolio" height="32">
+        </a>
         <a href="https://www.linkedin.com/in/SiddhantKoli" target="_blank">
           <img align="center" src="https://img.shields.io/badge/linkedin-%230A66C2.svg?style=for-the-badge&amp;logo=linkedin&amp;logoColor=white" alt="LinkedIn" height="32">
         </a>
@@ -94,6 +97,8 @@
         <img src="https://img.shields.io/badge/YOLOv8-00FFFF?style=for-the-badge&amp;logo=yolo&amp;logoColor=black" alt="YOLO">
         <img src="https://img.shields.io/badge/Whisper_Turbo-00A67E?style=for-the-badge&amp;logo=openai&amp;logoColor=white" alt="Whisper">
         <img src="https://img.shields.io/badge/RAG_Pipelines-6366F1?style=for-the-badge&amp;logo=probot&amp;logoColor=white" alt="RAG">
+        <img src="https://img.shields.io/badge/Pandas-150458?style=for-the-badge&amp;logo=pandas&amp;logoColor=white" alt="Pandas">
+        <img src="https://img.shields.io/badge/NumPy-013243?style=for-the-badge&amp;logo=numpy&amp;logoColor=white" alt="NumPy">
         <img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&amp;logo=streamlit&amp;logoColor=white" alt="Streamlit">
       </p>
       <h3 align="center">Web &amp; Backend Frameworks</h3>
@@ -110,9 +115,13 @@
         <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&amp;logo=mysql&amp;logoColor=white" alt="MySQL">
         <img src="https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&amp;logo=sqlite&amp;logoColor=white" alt="SQLite">
         <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&amp;logo=redis&amp;logoColor=white" alt="Redis">
+        <img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&amp;logo=firebase&amp;logoColor=black" alt="Firebase">
         <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&amp;logo=git&amp;logoColor=white" alt="Git">
         <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&amp;logo=github&amp;logoColor=white" alt="GitHub">
-        <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&amp;logo=docker&amp;logoColor=white" alt="Docker">
+        <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&amp;logo=vercel&amp;logoColor=white" alt="Vercel">
+        <img src="https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&amp;logo=render&amp;logoColor=black" alt="Render">
+        <img src="https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&amp;logo=postman&amp;logoColor=white" alt="Postman">
+        <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&amp;logo=vite&amp;logoColor=white" alt="Vite">
       </p>
     </samp>
   </div>

@@ -153,11 +153,6 @@
             <td>Real-time voice AI speaking assistant with speech-to-text and offline conversational LLMs.</td>
             <td><code>Whisper Large V3</code> <code>Ollama</code> <code>Python</code></td>
           </tr>
-          <tr>
-            <td><b><a href="https://github.com/SiddhantKoli/YOLOvX8_hand_raise_detection">YOLO Hand Detection</a></b></td>
-            <td>Computer vision pipeline for automated classroom interaction &amp; hand-raise recognition.</td>
-            <td><code>YOLOv8</code> <code>OpenCV</code> <code>PyTorch</code></td>
-          </tr>
         </tbody>
       </table>
     </samp>

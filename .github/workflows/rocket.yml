@@ -1,4 +1,4 @@
-name: Generate Snake Contribution Grid
+name: Generate Rocket Contribution Graph
 
 on:
   schedule:
@@ -18,15 +18,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Generate the snake files
-        uses: Platane/snk@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          github_user_name: SiddhantKoli
-          outputs: |
-            dist/github-contribution-grid-snake.svg
-            dist/github-contribution-grid-snake-dark.svg?palette=github-dark
+          node-version: "20"
 
-      - name: Deploy snake files to output branch
+      - name: Generate Rocket Contribution SVG
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USER: SiddhantKoli
+        run: |
+          node scripts/rocket-graph.mjs --user SiddhantKoli --out dist/rocket-contributions.svg
+
+      - name: Deploy to output branch
         uses: crazy-max/ghaction-github-pages@v4
         with:
           target_branch: output
